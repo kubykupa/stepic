@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <sstream>
 #include <unistd.h>
 
 using namespace std;
@@ -11,11 +10,17 @@ using namespace std;
 static const string OUT_PATH = "./result.out";
 vector<string> cmds;
 
-string trim(string str) {
+string trim2(string str) {
     str.erase(str.begin(), find_if(str.begin(), str.end(),
                 [](char& ch)->bool { return !isspace(ch); }));
     str.erase(find_if(str.rbegin(), str.rend(),
                 [](char& ch)->bool { return !isspace(ch); }).base(), str.end());
+    return str;
+}
+
+string trim(string str) {
+    str.erase(0, str.find_first_not_of(' '));
+    str.erase(str.find_last_not_of(' ')+1);
     return str;
 }
 
@@ -24,7 +29,7 @@ void tokenize(const string& str, vector<string>& tokens, const string& delimiter
     string::size_type pos     = str.find_first_of(delimiters, lastPos);
 
     while (string::npos != pos || string::npos != lastPos) {
-        tokens.push_back(trim(str.substr(lastPos, pos - lastPos)));
+        tokens.push_back(trim(str.substr(lastPos, pos - lastPos).c_str()));
         lastPos = str.find_first_not_of(delimiters, pos);
         pos = str.find_first_of(delimiters, lastPos);
     }
